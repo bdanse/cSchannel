@@ -2,6 +2,7 @@ Configuration SslBestPractise
 {
     Import-DscResource -ModuleName cSchannel -ModuleVersion 1.0
 
+    #region settings
     $DeniedProtocols = @(
     @{Protocol='Multi-Protocol Unified Hello';Ensure='Absent'},
     @{Protocol='PCT 1.0';Ensure='Absent'},
@@ -46,6 +47,45 @@ Configuration SslBestPractise
     @{KeyExchangeAlgoritm='ECDH';Ensure='Present'},
     @{KeyExchangeAlgoritm='PKCS';Ensure='Present'}
     )
+
+    $cipherSuites = @(
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521',
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384',
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P521',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P384',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256',
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P521',
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P384',
+    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P256',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P521',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P384',
+    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384_P521',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384_P384',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256_P521',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256_P384',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256_P256',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384_P521',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384_P384',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256_P521',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256_P384',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256_P256',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA_P521',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA_P384',
+    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA_P256',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA_P521',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA_P384',
+    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA_P256',
+    'TLS_RSA_WITH_AES_256_GCM_SHA384',
+    'TLS_RSA_WITH_AES_128_GCM_SHA256',
+    'TLS_RSA_WITH_AES_256_CBC_SHA256',
+    'TLS_RSA_WITH_AES_128_CBC_SHA256',
+    'TLS_RSA_WITH_AES_256_CBC_SHA',
+    'TLS_RSA_WITH_AES_128_CBC_SHA',
+    'TLS_RSA_WITH_3DES_EDE_CBC_SHA'
+    )
+    #endregion
 
     node localhost{
         foreach($Denied in $DeniedProtocols)
@@ -107,9 +147,15 @@ Configuration SslBestPractise
                 
             }
         }
+
+       cCryptoCipherSuites CipherSuites
+       {
+            Ensure = "Present"
+            CryptoCipherSuites = $cipherSuites
+       }
+
+       
     }
 }
-
-
-
-
+SslBestPractise
+Start-DscConfiguration -Path .\SslBestPractise -Wait -Verbose -Force

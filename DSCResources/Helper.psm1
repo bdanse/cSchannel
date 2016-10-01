@@ -274,14 +274,14 @@ function Set-CryptoCipherSuites
     $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002' 
     $cipherSuitesAsString = [string]::join(',', $cipherSuitesOrder)
 
-    New-Item $itemKey -ErrorAction SilentlyContinue
+    New-Item $itemKey -Force 
     New-ItemProperty -path $itemKey -name 'Functions' -value $cipherSuitesAsString -PropertyType 'String' -Force | Out-Null
 
 }
 
 function Remove-CryptoCipherSuites
 {
-    $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\' 
+    $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\' 
     Remove-Item $itemKey -Force -ErrorAction SilentlyContinue
 }
 #endregion

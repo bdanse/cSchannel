@@ -244,44 +244,4 @@ function Test-SchannelKeyExchangeAlgorithm
     $Key = $RootKey + "\" + $algorithm 
     Test-SchannelItem -itemKey $Key -enable $enable
 }
-
-function Test-CipherSuitesOrder
-{
-    param(
-        [string[]]$cipherSuitesOrder
-    )
-    $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002' 
-    $cipherSuitesAsString = [string]::join(',', $cipherSuitesOrder)
-
-    $result = $false
-    
-    if(Get-ItemProperty -Path $itemKey -Name 'Functions' -ErrorAction SilentlyContinue)
-    {
-        if ((Get-ItemPropertyValue -Path $itemKey -Name "Functions" ) -eq $cipherSuitesAsString)
-        {
-            $result = $true
-        }
-    }
-    return $result
-
-}
-
-function Set-CipherSuitesOrder
-{
-    param(
-        [string[]]$cipherSuitesOrder
-    )
-    $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\00010002' 
-    $cipherSuitesAsString = [string]::join(',', $cipherSuitesOrder)
-
-    New-Item $itemKey -Force 
-    New-ItemProperty -path $itemKey -name 'Functions' -value $cipherSuitesAsString -PropertyType 'String' -Force | Out-Null
-
-}
-
-function Remove-CipherSuitesOrder
-{
-    $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\' 
-    Remove-Item $itemKey -Force -ErrorAction SilentlyContinue
-}
 #endregion

@@ -46,7 +46,7 @@ Also Alexander Hass wrote an article and scripts to do the same:
 ```powershell
 configuration Sample_cSchannel
 {
-    Import-DscResource -ModuleName cCypto -ModuleVersion 1.0
+    Import-DscResource -ModuleName cSchannel -ModuleVersion 1.0
 
     $DeniedProtocols = @(
     @{Protocol='Multi-Protocol Unified Hello';Ensure='Absent'},

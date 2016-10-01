@@ -245,7 +245,7 @@ function Test-SchannelKeyExchangeAlgorithm
     Test-SchannelItem -itemKey $Key -enable $enable
 }
 
-function Test-CryptoCipherSuites
+function Test-CipherSuitesOrder
 {
     param(
         [string[]]$cipherSuitesOrder
@@ -266,7 +266,7 @@ function Test-CryptoCipherSuites
 
 }
 
-function Set-CryptoCipherSuites
+function Set-CipherSuitesOrder
 {
     param(
         [string[]]$cipherSuitesOrder
@@ -279,7 +279,7 @@ function Set-CryptoCipherSuites
 
 }
 
-function Remove-CryptoCipherSuites
+function Remove-CipherSuitesOrder
 {
     $itemKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\Configuration\SSL\' 
     Remove-Item $itemKey -Force -ErrorAction SilentlyContinue

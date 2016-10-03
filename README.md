@@ -13,7 +13,7 @@ Also Alexander Hass wrote an article and scripts to do the same:
 * **cCipher** set Cipher configuration
 * **cHash** set hashes configuration
 * **cKeyExchangeAlgoritm** set KeyExchangeAlgorithms configuration
-* **cCipherSuites** set cipher suites order
+* **cCryptoCipherSuites** set cipher suites order
 
 ### cProtocol
 * **Protocol**: Set configuration for any of these protocols 
@@ -37,8 +37,8 @@ Also Alexander Hass wrote an article and scripts to do the same:
 	* Valid values include: {'Diffie-Hellman'|'ECDH'|'PKCS'}
 * **Ensure**: Wheter the SCHANNEL KeyExchangeAlgoritm is allowed {Present} or denied {Absent}
 
-### cCipherSuites
-* **CipherSuitesOrder**: Array of cipher suites.
+### cCryptoCipherSuites
+* **CryptoCipherSuites**: Array of cipher suites.
 * **Ensure**: Wheter the CryptoCipherSuites is modified {Present} or Serverdefaults. {Absent}
 
 ## Example
@@ -48,7 +48,6 @@ configuration Sample_cSchannel
 {
     Import-DscResource -ModuleName cSchannel -ModuleVersion 1.0
 
-    #region settings
     $DeniedProtocols = @(
     @{Protocol='Multi-Protocol Unified Hello';Ensure='Absent'},
     @{Protocol='PCT 1.0';Ensure='Absent'},
@@ -93,45 +92,6 @@ configuration Sample_cSchannel
     @{KeyExchangeAlgoritm='ECDH';Ensure='Present'},
     @{KeyExchangeAlgoritm='PKCS';Ensure='Present'}
     )
-
-    $cipherSuites = @(
-    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521',
-    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384',
-    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256',
-    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P521',
-    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P384',
-    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256',
-    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P521',
-    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P384',
-    'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P256',
-    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P521',
-    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P384',
-    'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384_P521',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384_P384',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256_P521',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256_P384',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256_P256',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384_P521',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384_P384',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256_P521',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256_P384',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256_P256',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA_P521',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA_P384',
-    'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA_P256',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA_P521',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA_P384',
-    'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA_P256',
-    'TLS_RSA_WITH_AES_256_GCM_SHA384',
-    'TLS_RSA_WITH_AES_128_GCM_SHA256',
-    'TLS_RSA_WITH_AES_256_CBC_SHA256',
-    'TLS_RSA_WITH_AES_128_CBC_SHA256',
-    'TLS_RSA_WITH_AES_256_CBC_SHA',
-    'TLS_RSA_WITH_AES_128_CBC_SHA',
-    'TLS_RSA_WITH_3DES_EDE_CBC_SHA'
-    )
-    #endregion
 
     node localhost{
         foreach($Denied in $DeniedProtocols)
@@ -193,12 +153,6 @@ configuration Sample_cSchannel
                 
             }
         }
-
-       cCipherSuites CipherSuites
-       {
-            Ensure = "Present"
-            CipherSuitesOrder = $cipherSuites
-       }
     }
 }
 Sample_cSchannel 

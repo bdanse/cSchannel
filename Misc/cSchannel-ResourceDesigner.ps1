@@ -17,7 +17,7 @@ $KeyExchangeAlgoritm = New-xDscResourceProperty -Name KeyExchangeAlgoritm -Type 
 $Ensure = New-xDscResourceProperty -Name Ensure -Type String -Attribute Write -ValidateSet "Present", "Absent" -Description ''
 New-xDscResource -Name cKeyExchangeAlgoritm -Property @($KeyExchangeAlgoritm, $Ensure) -ModuleName $moduleName -FriendlyName cKeyExchangeAlgoritm
 
-$CryptoCipherSuites = New-xDscResourceProperty -Name CryptoCipherSuites -Type String[] -Attribute Write -Description ''
+$CryptoCipherSuites = New-xDscResourceProperty -Name CipherSuitesOrder -Type String[] -Attribute Write -Description ''
 $Ensure = New-xDscResourceProperty -Name Ensure -Type String -Attribute Key -ValidateSet "Present", "Absent" -Description ''
-New-xDscResource -Name cCryptoCipherSuites -Property @($CryptoCipherSuites, $Ensure) -ModuleName $moduleName -FriendlyName CryptoCipherSuites
+New-xDscResource -Name cCipherSuites -Property @($CryptoCipherSuites, $Ensure) -ModuleName $moduleName -FriendlyName cCipherSuites
 

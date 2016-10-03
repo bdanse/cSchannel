@@ -1,4 +1,4 @@
-Configuration SslBestPractise
+﻿Configuration SslBestPractise
 {
     Import-DscResource -ModuleName cSchannel -ModuleVersion 1.0
 
@@ -88,6 +88,7 @@ Configuration SslBestPractise
     #endregion
 
     node localhost{
+    
         foreach($Denied in $DeniedProtocols)
         {
             cProtocol ("Deny-" + ($Denied.Protocol).replace('.','').replace(' ', ''))
@@ -97,7 +98,7 @@ Configuration SslBestPractise
                 includeClientSide = $true
             }
         }
-
+        
         foreach($Allowed in $AllowedProtocols)
         {
             cProtocol ("Allow-" + ($Allowed.Protocol).replace('.','').replace(' ', ''))
@@ -127,7 +128,7 @@ Configuration SslBestPractise
                 
             }
         }
-
+        
         foreach($Allowed in $AllowedHashes)
         {
             cHash ("Allow-" + ($Allowed.Hash))
@@ -147,13 +148,13 @@ Configuration SslBestPractise
                 
             }
         }
-
-       cCryptoCipherSuites CipherSuites
+        
+       cCipherSuites CipherSuites
        {
             Ensure = "Present"
-            CryptoCipherSuites = $cipherSuites
+            CipherSuitesOrder = $cipherSuites
        }
-
+       
        
     }
 }

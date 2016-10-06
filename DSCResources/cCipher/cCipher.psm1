@@ -33,9 +33,20 @@ function Get-TargetResource
         $Ensure
     )
     
+    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
+    $Key = $RootKey + "\" + $cipher 
+    if(Test-SchannelItem -itemKey $Key -enable ($Ensure -eq "Present"))
+    {
+        $Result = "Present" 
+    }
+    else
+    {
+        $Result = "Absent" 
+    }
+
     $returnValue = @{
     Cipher = [System.String]$Cipher
-    Ensure = [System.String](Test-SchannelCipher -cipher $Cipher -enable ($Ensure -eq "Present"))
+    Ensure = [System.String]$Result
     }
 
     $returnValue
@@ -58,16 +69,19 @@ function Set-TargetResource
         $Ensure
     )
 
-        if($Ensure -eq "Present")
-        {
-            Write-Verbose -Message ($LocalizedData.ItemEnable -f 'Cipher', $Cipher)
-            Enable-SchannelCipher -cipher $Cipher
-        }    
-        else
-        {
-            Write-Verbose -Message ($LocalizedData.ItemDisable -f 'Cipher', $Cipher)
-            Disable-SchannelCipher -cipher $Cipher
-        }
+    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
+    $Key = $RootKey + "\" + $cipher 
+
+    if($Ensure -eq "Present")
+    {
+        Write-Verbose -Message ($LocalizedData.ItemEnable -f 'Cipher', $Cipher)
+        Switch-SchannelItem -itemKey $Key -enable $true
+    }    
+    else
+    {
+        Write-Verbose -Message ($LocalizedData.ItemDisable -f 'Cipher', $Cipher)
+        Switch-SchannelItem -itemKey $Key -enable $false
+    }
 
 
 }
@@ -88,12 +102,16 @@ function Test-TargetResource
         [System.String]
         $Ensure
     )
-    
-    $Compliant = $true
+    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
+    $Key = $RootKey + "\" + $cipher 
+    $currentCipher = Get-TargetResource @PSBoundParameters
+    $Compliant = $false
+
+    $ErrorActionPreference = "SilentlyContinue"
     Write-Verbose -Message ($LocalizedData.ItemTest -f 'Cipher', $Cipher)
-    if(-not (Test-SchannelCipher -cipher $Cipher -enable ($Ensure -eq "Present")))
+    if($currentCipher.Ensure -eq $Ensure -and (Get-ItemProperty -Path $Key -Name Enabled) -and (Get-ItemProperty -Path $Key -Name DisabledByDefault))
     {
-        $Compliant = $false
+        $Compliant = $true
     }
             
     if($Compliant)

@@ -40,7 +40,7 @@ function Test-SchannelItem
         True {$value = '4294967295'}
         False {$value = '0'}
     }
-    
+
     $result = $false
     $ErrorActionPreference = "SilentlyContinue"
     if(Get-ItemProperty -Path $itemKey -Name Enabled)
@@ -62,7 +62,18 @@ function Switch-SchannelItem
 
     if(-not (Test-Path -Path $itemKey))
     {
-        New-Item -Path $itemKey -Force | Out-Null
+        if($itemKey -match "\\SecurityProviders\\SCHANNEL\\Ciphers")
+        {
+            $itemKeyArray = $itemKey.Split('\')
+            $rootKey = [string]::Join('\', $itemKeyArray[0..4])
+            $subKey = $itemKeyArray[5]
+            $keyCreate = $itemKeyArray[6]
+            [void](Get-Item $rootKey).openSubKey($subKey, $true).CreateSubKey($keyCreate)
+        }
+        else
+        {
+            New-Item -Path $itemKey -Force | Out-Null
+        }
     }
     switch ($enable)
     {
@@ -71,120 +82,8 @@ function Switch-SchannelItem
     }
 
     New-ItemProperty -Path $itemKey -Name 'Enabled' -Value $value -PropertyType Dword -Force | Out-Null
+    #New-ItemProperty -Path $itemKey -Name 'DisabledByDefault' -Value ([int](-not $enable)) -PropertyType Dword -Force | Out-Null
     
 }
 
-function Enable-SchannelCipher
-{
-    param(
-        [ValidateSet('AES 128/128','AES 256/256','DES 56/56','NULL','RC2 128/128','RC2 40/128','RC2 56/128','RC4 128/128','RC4 40/128','RC4 56/128','RC4 64/128','Triple DES 168')]
-        [string]$cipher
-    )
-
-    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
-    $Key = $RootKey + "\" + $cipher 
-    Switch-SchannelItem -itemKey $Key -enable $true
-  
-}
-
-function Disable-SchannelCipher
-{
-    param(
-        [ValidateSet('AES 128/128','AES 256/256','DES 56/56','NULL','RC2 128/128','RC2 40/128','RC2 56/128','RC4 128/128','RC4 40/128','RC4 56/128','RC4 64/128','Triple DES 168')]
-        [string]$cipher
-    )
-
-    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
-    $Key = $RootKey + "\" + $cipher 
-    Switch-SchannelItem -itemKey $Key -enable $false
-  
-}
-
-function Test-SchannelCipher
-{
-    param(
-        [ValidateSet('AES 128/128','AES 256/256','DES 56/56','NULL','RC2 128/128','RC2 40/128','RC2 56/128','RC4 128/128','RC4 40/128','RC4 56/128','RC4 64/128','Triple DES 168')]
-        [string]$cipher,
-        [bool]$enable
-    )
-    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
-    $Key = $RootKey + "\" + $cipher 
-    return Test-SchannelItem -itemKey $Key -enable $enable
-}
-
-function Enable-SchannelHash
-{
-    param(
-        [ValidateSet('MD5','SHA','SHA256','SHA384','SHA512')]
-        [string]$hash
-    )
-
-    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
-    $Key = $RootKey + "\" + $hash 
-    Switch-SchannelItem -itemKey $Key -enable $true
-  
-}
-
-function Disable-SchannelHash
-{
-    param(
-        [ValidateSet('MD5','SHA','SHA256','SHA384','SHA512')]
-        [string]$hash
-    )
-
-    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
-    $Key = $RootKey + "\" + $hash 
-    Switch-SchannelItem -itemKey $Key -enable $false
-  
-}
-
-function Test-SchannelHash
-{
-    param(
-        [ValidateSet('MD5','SHA','SHA256','SHA384','SHA512')]
-        [string]$hash,
-        [bool]$enable
-    )
-    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
-    $Key = $RootKey + "\" + $hash 
-    return Test-SchannelItem -itemKey $Key -enable $enable
-}
-
-function Enable-SchannelKeyExchangeAlgorithm
-{
-    param(
-        [ValidateSet('Diffie-Hellman','ECDH','PKCS')]
-        [string]$algorithm
-    )
-
-    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms'
-    $Key = $RootKey + "\" + $algorithm 
-    Switch-SchannelItem -itemKey $Key -enable $true
-  
-}
-
-function Disable-SchannelKeyExchangeAlgorithm
-{
-    param(
-        [ValidateSet('Diffie-Hellman','ECDH','PKCS')]
-        [string]$algorithm
-    )
-
-    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms'
-    $Key = $RootKey + "\" + $algorithm 
-    Switch-SchannelItem -itemKey $Key -enable $false
-  
-}
-
-function Test-SchannelKeyExchangeAlgorithm
-{
-    param(
-        [ValidateSet('Diffie-Hellman','ECDH','PKCS')]
-        [string]$algorithm,
-        [bool]$enable
-    )
-    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms'
-    $Key = $RootKey + "\" + $algorithm 
-    return Test-SchannelItem -itemKey $Key -enable $enable
-}
 #endregion

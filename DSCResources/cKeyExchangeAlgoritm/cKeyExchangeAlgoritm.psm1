@@ -32,10 +32,20 @@ function Get-TargetResource
         [System.String]
         $Ensure
     )
-    
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms'
+    $Key = $RootKey + "\" + $KeyExchangeAlgoritm 
+    if(Test-SchannelItem -itemKey $Key -enable ($Ensure -eq "Present"))
+    {
+        $Result = "Present" 
+    }
+    else
+    {
+        $Result = "Absent" 
+    }
+
     $returnValue = @{
     KeyExchangeAlgoritm = [System.String]$KeyExchangeAlgoritm
-    Ensure = [System.String](Test-SchannelKeyExchangeAlgorithm -algorithm $KeyExchangeAlgoritm -enable ($Ensure -eq "Present"))
+    Ensure = [System.String]$Result
     }
 
     $returnValue
@@ -58,15 +68,19 @@ function Set-TargetResource
         $Ensure
     )
 
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms'
+    $Key = $RootKey + "\" + $KeyExchangeAlgoritm 
+    
+
     if($Ensure -eq "Present")
     {
         Write-Verbose -Message ($LocalizedData.ItemEnable -f 'KeyExchangeAlgoritm', $KeyExchangeAlgoritm)
-        Enable-SchannelKeyExchangeAlgorithm -algorithm $KeyExchangeAlgoritm
+        Switch-SchannelItem -itemKey $Key -enable $true
     }    
     else
     {
         Write-Verbose -Message ($LocalizedData.ItemDisable -f 'KeyExchangeAlgoritm', $KeyExchangeAlgoritm)
-        Disable-SchannelKeyExchangeAlgorithm -algorithm $KeyExchangeAlgoritm
+        Switch-SchannelItem -itemKey $Key -enable $false
     }
 
 
@@ -88,14 +102,19 @@ function Test-TargetResource
         [System.String]
         $Ensure
     )
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms'
+    $Key = $RootKey + "\" + $KeyExchangeAlgoritm 
+    $currentKEA = Get-TargetResource @PSBoundParameters
+    $Compliant = $false
 
-    $Compliant = $true
-    Write-Verbose -Message ($LocalizedData.ItemTest -f 'KeyExchangeAlgoritm', $KeyExchangeAlgoritm)
-    if(-not (Test-SchannelKeyExchangeAlgorithm -algorithm $KeyExchangeAlgoritm -enable ($Ensure -eq "Present")))
+    $ErrorActionPreference = "SilentlyContinue"
+    Write-Verbose -Message ($LocalizedData.ItemTest -f 'KeyExchangeAlgoritm', $Cipher)
+    if($currentKEA.Ensure -eq $Ensure -and (Get-ItemProperty -Path $Key -Name Enabled))
     {
-        $Compliant = $false
-    }    
-            if($Compliant)
+        $Compliant = $true
+    }
+    
+    if($Compliant)
     {
         Write-Verbose -Message ($LocalizedData.ItemCompliant -f 'KeyExchangeAlgoritm', $KeyExchangeAlgoritm)
     }

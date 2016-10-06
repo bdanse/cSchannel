@@ -32,11 +32,21 @@ function Get-TargetResource
         [System.String]
         $Ensure
     )
-
-
+    
+    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
+    $Key = $RootKey + "\" + $Hash 
+    if(Test-SchannelItem -itemKey $Key -enable ($Ensure -eq "Present"))
+    {
+        $Result = "Present" 
+    }
+    else
+    {
+        $Result = "Absent" 
+    }
+    
     $returnValue = @{
     Hash = [System.String]$Hash
-    Ensure = [System.String](Test-SchannelHash -hash $Hash -enable ($Ensure -eq "Present"))
+    Ensure = [System.String]$Result
     }
 
     $returnValue
@@ -58,16 +68,19 @@ function Set-TargetResource
         [System.String]
         $Ensure
     )
+    
+    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
+    $Key = $RootKey + "\" + $Hash 
 
     if($Ensure -eq "Present")
     {
         Write-Verbose -Message ($LocalizedData.ItemEnable -f 'Hash', $Hash)
-        Enable-SchannelHash -hash $Hash
+        Switch-SchannelItem -itemKey $Key -enable $true
     }    
     else
     {
         Write-Verbose -Message ($LocalizedData.ItemDisable -f 'Hash', $Hash)
-        Disable-SchannelHash -hash $Hash
+        Switch-SchannelItem -itemKey $Key -enable $false
     }
 
 }
@@ -88,13 +101,18 @@ function Test-TargetResource
         [System.String]
         $Ensure
     )
+    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
+    $Key = $RootKey + "\" + $Hash 
+    $currentHash = Get-TargetResource @PSBoundParameters
+    $Compliant = $false
 
-    $Compliant = $true
-    Write-Verbose -Message ($LocalizedData.ItemTest-f 'Hash', $Hash)
-    if(-not (Test-SchannelHash -hash $Hash -enable ($Ensure -eq "Present")))
+    $ErrorActionPreference = "SilentlyContinue"
+    Write-Verbose -Message ($LocalizedData.ItemTest -f 'Cipher', $Cipher)
+    if($currentHash.Ensure -eq $Ensure -and (Get-ItemProperty -Path $Key -Name Enabled))
     {
-        $Compliant = $false
-    }    
+        $Compliant = $true
+    }
+
     if($Compliant)
     {
         Write-Verbose -Message ($LocalizedData.ItemCompliant -f 'Hash', $Hash)

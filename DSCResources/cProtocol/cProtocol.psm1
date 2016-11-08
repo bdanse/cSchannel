@@ -116,7 +116,7 @@ function Test-TargetResource
 
     $ErrorActionPreference = "SilentlyContinue"
     Write-Verbose -Message ($LocalizedData.TestClientProtocol -f $Protocol, $Ensure)
-    if($currentProtocol.Ensure -eq $Ensure -and $currentProtocol.includeClientSide -eq $includeClientSide  -and (Get-ItemProperty -Path $Key -Name Enabled) -and (Get-ItemProperty -Path $Key -Name DisabledByDefault))
+    if($currentProtocol.Ensure -eq $Ensure -and $currentProtocol.includeClientSide -eq $includeClientSide)
     {
         $Compliant = $true
     }

@@ -35,7 +35,7 @@ function Get-TargetResource
     
     $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes'
     $Key = $RootKey + "\" + $Hash 
-    if(Test-SchannelItem -itemKey $Key -enable ($Ensure -eq "Present"))
+    if(Test-SchannelItem -itemKey $Key -enable $true)
     {
         $Result = "Present" 
     }

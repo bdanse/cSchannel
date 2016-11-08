@@ -32,10 +32,10 @@ function Get-TargetResource
         [System.String]
         $Ensure
     )
-    
+
     $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
     $Key = $RootKey + "\" + $cipher 
-    if(Test-SchannelItem -itemKey $Key -enable ($Ensure -eq "Present"))
+    if(Test-SchannelItem -itemKey $Key -enable $true)
     {
         $Result = "Present" 
     }
@@ -109,7 +109,7 @@ function Test-TargetResource
 
     $ErrorActionPreference = "SilentlyContinue"
     Write-Verbose -Message ($LocalizedData.ItemTest -f 'Cipher', $Cipher)
-    if($currentCipher.Ensure -eq $Ensure -and (Get-ItemProperty -Path $Key -Name Enabled) -and (Get-ItemProperty -Path $Key -Name DisabledByDefault))
+    if($currentCipher.Ensure -eq $Ensure -and (Get-ItemProperty -Path $Key -Name Enabled))
     {
         $Compliant = $true
     }

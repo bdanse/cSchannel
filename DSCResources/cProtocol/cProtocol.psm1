@@ -116,7 +116,11 @@ function Test-TargetResource
 
     $ErrorActionPreference = "SilentlyContinue"
     Write-Verbose -Message ($LocalizedData.TestClientProtocol -f $Protocol, $Ensure)
-    if($currentProtocol.Ensure -eq $Ensure -and $currentProtocol.includeClientSide -eq $includeClientSide)
+
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols' 
+    $Key = $RootKey + "\" + $Protocol
+
+    if($currentProtocol.Ensure -eq $Ensure -and $currentProtocol.includeClientSide -eq $includeClientSide -and (Test-Path -Path $Key))
     {
         $Compliant = $true
     }

@@ -33,7 +33,7 @@ function Get-TargetResource
         $Ensure
     )
 
-    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
     $Key = $RootKey + "\" + $cipher 
     if(Test-SchannelItem -itemKey $Key -enable $true)
     {
@@ -69,7 +69,7 @@ function Set-TargetResource
         $Ensure
     )
 
-    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
     $Key = $RootKey + "\" + $cipher 
 
     if($Ensure -eq "Present")
@@ -102,7 +102,7 @@ function Test-TargetResource
         [System.String]
         $Ensure
     )
-    $RootKey = 'HKLM:SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
+    $RootKey = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers'
     $Key = $RootKey + "\" + $cipher 
     $currentCipher = Get-TargetResource @PSBoundParameters
     $Compliant = $false

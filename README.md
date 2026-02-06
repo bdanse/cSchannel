@@ -1,6 +1,8 @@
 # cSchannel
 cSchannel Dsc Resource to modify SSL endpoint configuration
 
+This module is not maintained please use [SChannelDsc](https://github.com/dsccommunity/SChannelDsc)
+
 The **cSchannel** DSC resource configures all aspects of SCHANNEL. For quick reference of the best settings check 
 (https://www.nartac.com/Products/IISCrypto)
 

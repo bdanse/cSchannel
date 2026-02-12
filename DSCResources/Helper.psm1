@@ -65,10 +65,10 @@ function Switch-SchannelItem
         if($itemKey -match "\\SecurityProviders\\SCHANNEL\\Ciphers")
         {
             $itemKeyArray = $itemKey.Split('\')
-            $rootKey = [string]::Join('\', $itemKeyArray[0..4])
-            $subKey = $itemKeyArray[5]
-            $keyCreate = $itemKeyArray[6]
-            [void](Get-Item $rootKey).openSubKey($subKey, $true).CreateSubKey($keyCreate)
+            $keyPath = [string]::Join('\', $itemKeyArray[2..7])
+            $Writable = $True
+            $Key = (Get-Item HKLM:\).OpenSubKey("SYSTEM", $Writable).CreateSubKey("$keyPath")
+            $Key.SetValue("Enabled", "$value", [Microsoft.Win32.RegistryValueKind]::DWORD)
         }
         else
         {
